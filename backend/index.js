@@ -12,13 +12,7 @@ async function run(filename) {
 
 let { unlink, rmdir, mkdir, watch, readFile } = require('mz/fs');
 async function main() {
-  // clean and create tmp folder
-  try {
-    await rmdir('tmp');
-  } catch (err) {
-    if (err.code !== 'ENOTEMPTY' && err.code !== 'ENOENT')
-      throw(err);
-  }
+  // create tmp folder
   await mkdir('tmp');
   // watch tmp folder
   const watcher = watch('tmp', async (eventType, filename) => {
@@ -29,11 +23,19 @@ async function main() {
       unlink(filename);
     }
   });
+  // run main task
   try {
     await run('main.exe');
-    watcher.close();
   } catch (err) {
-    console.log(err.errno);
+    console.log(`Running algorithm error, code: ${err.errno}`);
+  }
+  // finish watch
+  watcher.close();
+  // remove tmp folder
+  try {
+    await rmdir('tmp');
+  } catch (err) {
+    console.log(`Unable to remove tmp folder, error code: ${err.code}`);
   }
 }
 
