@@ -1,2 +1,5 @@
 # Binaries
 *.exe
+
+# NPM
+node_modules

@@ -1,4 +1,6 @@
 {
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
     {
@@ -6,13 +8,9 @@
       "type": "shell",
       "command": "g++",
       "args": [
-        "main.cpp",
-        "-g3",
-        "-IC:/MinGW/include",
-        "-lboost_system",
-        "-lboost_coroutine",
-        "-lws2_32",
-        "-omain"
+        "${file}",
+        "-omain",
+        "-g3"
       ],
       "group": {
         "kind": "build",
@@ -27,18 +25,14 @@
       "type": "shell",
       "command": "g++",
       "args": [
-        "main.cpp",
-        "-O2",
-        "-IC:/MinGW/include",
-        "-lboost_system",
-        "-lboost_coroutine",
-        "-lwsock32",
-        "-omain"
+        "${file}",
+        "-omain",
+        "-O2"
       ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "group": "build",
+      "problemMatcher": [
+        "$gcc"
+      ]
     }
   ]
 }

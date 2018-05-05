@@ -47,8 +47,7 @@
             "intelliSenseMode": "clang-x64",
             "compilerPath": "C:/MinGW/bin/g++.exe",
             "includePath": [
-                "${workspaceFolder}",
-                "C:/MinGW/include/"
+                "${workspaceFolder}"
             ],
             "defines": [
                 "_DEBUG",
