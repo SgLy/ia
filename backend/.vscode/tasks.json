@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Debug",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "main.cpp",
+        "-g3",
+        "-IC:/MinGW/include",
+        "-lboost_system",
+        "-lboost_coroutine",
+        "-lws2_32",
+        "-omain"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Release",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "main.cpp",
+        "-O2",
+        "-IC:/MinGW/include",
+        "-lboost_system",
+        "-lboost_coroutine",
+        "-lwsock32",
+        "-omain"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
