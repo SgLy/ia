@@ -5,17 +5,18 @@
 #include <windows.h>
 
 using std::string;
+using std::make_unique;
+using std::unique_ptr;
 
 int main()
 {
     for (int i = 0; i < 50; ++i) {
         Sleep(100); // simulate calculation
-        auto filename = std::make_unique<char[]>(64);
+        auto filename = make_unique<char[]>(64);
         sprintf(filename.get(), "tmp/%d.out", i);
-        FILE * f = fopen(filename.get(), "w");
-        fprintf(f, "{ \"data\": %d }", i);
-        fclose(f);
+        auto f = unique_ptr<FILE, decltype(&fclose)>(
+            fopen(filename.get(), "w"), &fclose);
+        fprintf(f.get(), "{ \"data\": %d }", i);
     }
-
     return 0;
 }
