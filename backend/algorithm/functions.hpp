@@ -198,21 +198,33 @@ class Function {
         double operator() (const vec &x) {
             return this->f(x) + func_num * 100;
         }
-        void dump(std::string filename, double step = 0.5) {
+        void dumpMap(double step = 0.25) {
             if (this->D != 2)
                 return;
-            auto file = std::unique_ptr<FILE, decltype(&fclose)>(
-                fopen(filename.c_str(), "w"), &fclose);
-            fprintf(file.get(), "[");
+            mat map;
+            double minV = 1e10, maxV = -1e10;
             for (double i = -100; i <= 100; i += step) {
-                fprintf(file.get(), "[");
-                for (double j = -100; j <= 100; j += step)
-                    fprintf(file.get(), "%.2lf,", this->f(vec{i, j}));
-                fseek(file.get(), -1, SEEK_CUR);
-                fprintf(file.get(), "],");
+                vec row;
+                for (double j = -100; j <= 100; j += step) {
+                    double v = this->f(vec{i, j});
+                    row.push_back(v);
+                    minV = std::min(v, minV);
+                    maxV = std::max(v, maxV);
+                }
+                map.push_back(row);
             }
-            fseek(file.get(), -1, SEEK_CUR);
-            fprintf(file.get(), "]");
+            printf("{\"type\":\"mapRowCount\",\"data\":%zd}\n", map.size());
+            printf("{\"type\":\"mapValueRange\",\"data\":{\"min\":%.5lf,\"max\":%.5lf}}\n", minV, maxV);
+            for (auto it = map.begin(); it != map.end(); ++it) {
+                printf("{\"type\":\"mapRow\",\"data\":{\"index\": %d,\"values\":[", it - map.begin());
+                auto lastAdd = &(*--it->end());
+                for (const auto &v: *it) {
+                    printf("%.2lf", v);
+                    if (&v != lastAdd)
+                        putchar(',');
+                }
+                printf("]}}\n");
+            }
         }
 
     private:

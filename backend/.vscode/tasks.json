@@ -13,7 +13,8 @@
       "args": [
         "main.cpp",
         "-omain",
-        "-g3"
+        "-g3",
+        "-Wall"
       ],
       "group": {
         "kind": "build",

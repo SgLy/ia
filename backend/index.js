@@ -1,7 +1,4 @@
-const { execFile } = require('mz/child_process');
 const { spawn } = require('child_process');
-const { unlink, rmdir, mkdir, watch, readFile } = require('mz/fs');
-const osType = require('os').type();
 const path = require('path');
 
 const app = require('express')();
@@ -19,19 +16,25 @@ io.sockets.on('connection', (socket) => {
   console.log('socket connected');
   socket.emit('connected');
   socket.on('run', async (params) => {
-    let algo = spawn('main', [], {
+    console.log(`Running algorithm with params ${JSON.stringify(params)}`);
+    let algo = spawn('main', [params.func, params.D], {
       cwd: path.resolve(__dirname, 'algorithm')
     });
+    let trailing = '';
     algo.stdout.on('data', (d) => {
-      d.toString().split('\n').forEach(data => {
+      const alldata = (trailing + d.toString()).split('\n');
+      alldata.forEach((data, i) => {
         if (data.length === 0)
           return;
         try {
-          data = JSON.parse(data);
+          const json = JSON.parse(data);
+          socket.emit(json.type, json.data);
         } catch (err) {
-          console.log(`Parse data error, reason: ${err}, data: ${data}`);
+          // if (i === alldata.length - 1)
+            trailing = data;
+          // else
+          //   console.log(`Parse data error, reason: ${err}, data: ${data}`);
         }
-        socket.emit('data', data);
       });
     });
     algo.on('error', (err) => {
