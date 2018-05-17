@@ -9,7 +9,7 @@
       "command": "g++",
       "args": [
         "${file}",
-        "-omain",
+        "-o../main",
         "-g3"
       ],
       "group": {
@@ -26,7 +26,7 @@
       "command": "g++",
       "args": [
         "${file}",
-        "-omain",
+        "-o../main",
         "-O2"
       ],
       "group": "build",
