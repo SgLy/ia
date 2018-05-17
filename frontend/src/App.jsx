@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import data from './data.js';
+import data from './data.json';
 
 class Canvas extends Component {
   constructor(props) {
@@ -10,24 +10,33 @@ class Canvas extends Component {
     const maxy = Math.max(...data.map(d => Math.max(...d)));
     console.log(miny, maxy);
     this.colorMap = (v) => {
-      let c = 255 * (v - miny) / (maxy - miny);
-      return `rgb(${c}, 0, ${256 - c})`;
+      let t = Math.sqrt((v - miny) / (maxy - miny));
+      let c = 255 * t;
+      return `rgb(${c}, ${255 - c}, 0)`;
     };
   }
 
   componentDidMount = () => {
     const ctx = document.getElementById(this.id).getContext('2d');
+    const w = this.props.width / this.props.data.length;
+    console.log(w);
     this.props.data.forEach((r, i) => {
+      const h = this.props.height / r.length;
+      console.log(h);
       r.forEach((c, j) => {
         ctx.fillStyle = this.colorMap(c);
-        ctx.fillRect(i / this.props.data.length * this.props.width, j / r.length * this.props.height, 1, 1);
+        ctx.fillRect(i * w, j * h, w, h);
       });
     });
   }
 
   render() {
     return (
-      <canvas width={this.props.width} height={this.props.height} id={this.id}></canvas>
+      <canvas
+        width={this.props.width}
+        height={this.props.height}
+        id={this.id}
+      ></canvas>
     )
   }
 }

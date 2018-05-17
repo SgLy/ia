@@ -9,7 +9,7 @@
       "command": "g++",
       "args": [
         "${file}",
-        "-o../main",
+        "-o ${workspaceFolder}/main",
         "-g3"
       ],
       "group": {

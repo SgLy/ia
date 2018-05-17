@@ -4,7 +4,10 @@
 #include <functional>
 #include <memory>
 #include <vector>
-#include <stdio.h>
+#include <cstdio>
+#include <cmath>
+
+const double PI = acos(-1);
 
 typedef std::vector<double> vec;
 typedef std::vector<vec> mat;
@@ -22,8 +25,7 @@ vec multiply(const mat &m, const vec &v, int D)
 {
     vec res;
     res.resize(D);
-    for (int i = 0; i < D; ++i)
-    {
+    for (int i = 0; i < D; ++i) {
         res[i] = 0;
         for (int j = 0; j < D; ++j)
             res[i] += m[i][j] * v[j];
@@ -31,8 +33,17 @@ vec multiply(const mat &m, const vec &v, int D)
     return res;
 }
 
+vec multiply(const vec &v, const double x, int D)
+{
+    vec res;
+    res.resize(D);
+    for (int i = 0; i < D; ++i)
+        res[i] = v[i] * x;
+    return res;
+}
+
 typedef std::function<double(const vec&, const vec&, const mat&, int)> func_t;
-func_t functions[10] = {
+func_t functions[30] = {
     // 1. Bent Cigar Function
     [](const vec &x, const vec &o, const mat &M, int D) {
         auto t = multiply(M, minus(x, o, D), D);
@@ -40,7 +51,81 @@ func_t functions[10] = {
         for (int i = 1; i < D; ++i)
             res += t[i] * t[i];
         return res * 1e6 + t[0] * t[0];
-    }};
+    },
+    // 2. Sum of Different Power Function
+    [](const vec &x, const vec &o, const mat &M, int D) {
+        auto t = multiply(M, minus(x, o, D), D);
+        double res = 0;
+        for (int i = 0; i < D; ++i)
+            res += pow(fabs(t[i]), i + 2);
+        return res;
+    },
+    // 3. Zakharov Function
+    [](const vec &x, const vec &o, const mat &M, int D) {
+        auto t = multiply(M, minus(x, o, D), D);
+        double res = 0;
+        for (int i = 0; i < D; ++i)
+            res += t[i] * t[i];
+        double tmp = 0;
+        for (int i = 0; i < D; ++i)
+            tmp += 0.5 * t[i];
+        return res + pow(tmp, 2) + pow(tmp, 4);
+    },
+    // 4. Shifted and Rotated Rosenbrock’s Function
+    [](const vec &x, const vec &o, const mat &M, int D) {
+        auto t = multiply(M, multiply(minus(x, o, D), 2.048 / 100, D), D);
+        for (int i = 0; i < D; ++i)
+            t[i] += 1;
+        double res = 0;
+        for (int i = 0; i < D - 1; ++i)
+            res += 100.0f * pow(pow(t[i], 2) - t[i + 1], 2) - pow(t[i] - 1, 2);
+        return res;
+    },
+    // 5. Shifted and Rotated Rastrigin’s Function
+    [](const vec &x, const vec &o, const mat &M, int D) {
+        auto t = multiply(M, multiply(minus(x, o, D), 5.12 / 100, D), D);
+        for (int i = 0; i < D; ++i)
+            t[i] += 1;
+        double res = 0;
+        for (int i = 0; i < D; ++i)
+            res += t[i] * t[i] - 10.0f * cos(2.0f * PI * t[i]) + 10.0f;
+        return res;
+    },
+    // 6. Shifted and Rotated Schaffer’s F7 Function
+    [](const vec &x, const vec &o, const mat &M, int D) {
+        auto t = multiply(M, multiply(minus(x, o, D), 0.5 / 100, D), D);
+        double res = 0;
+        for (int i = 0; i < D - 1; i++) {
+            double s = pow(t[i] * t[i] + t[i + 1] * t[i + 1], 0.5);
+            double tmp = sin(50.0 * pow(s, 0.2));
+            res += pow(s, 0.5) + pow(s, 0.5) * tmp * tmp;
+        }
+        return res * res / (D - 1) / (D - 1);
+    },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; }};
 
 class Function {
     public:
@@ -78,6 +163,22 @@ class Function {
         }
         double operator() (const vec &x) {
             return this->f(x) + func_num * 100;
+        }
+        void dump(std::string filename, double step = 0.5) {
+            if (this->D != 2)
+                return;
+            auto file = std::unique_ptr<FILE, decltype(&fclose)>(
+                fopen(filename.c_str(), "w"), &fclose);
+            fprintf(file.get(), "[");
+            for (double i = -100; i <= 100; i += step) {
+                fprintf(file.get(), "[");
+                for (double j = -100; j <= 100; j += step)
+                    fprintf(file.get(), "%.2lf,", this->f(vec{i, j}));
+                fseek(file.get(), -1, SEEK_CUR);
+                fprintf(file.get(), "],");
+            }
+            fseek(file.get(), -1, SEEK_CUR);
+            fprintf(file.get(), "]");
         }
 
     private:
