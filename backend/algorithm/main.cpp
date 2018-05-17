@@ -3,12 +3,10 @@
 
 int main()
 {
-    std::vector<double> x;
-    x.resize(10);
-    for (int i = 0; i < 10; ++i)
-        x[i] = i;
+    int func_num = 1, D = 2;
+    std::vector<double> x {-55.276398, -70.429560};
 
-    Function f(1, 10);
-    double t = f.f(x);
+    Function f(func_num, D);
+    printf("%.5lf\n", f(x));
     return 0;
 }

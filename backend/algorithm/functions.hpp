@@ -50,6 +50,7 @@ class Function {
             std::string data_dir = "codes/C version/input_data")
         {
             this->D = D;
+            this->func_num = func_num;
             auto filename = std::make_unique<char[]>(64);
 
             sprintf(filename.get(), "%s/shift_data_%d.txt", data_dir.c_str(),
@@ -75,10 +76,13 @@ class Function {
                 functions[func_num - 1],
                 std::placeholders::_1, o, M, D);
         }
-        std::function<double(const vec &)> f;
+        double operator() (const vec &x) {
+            return this->f(x) + func_num * 100;
+        }
 
     private:
-        int D;
+        std::function<double(const vec &)> f;
+        int D, func_num;
         vec o;
         mat M;
 };
