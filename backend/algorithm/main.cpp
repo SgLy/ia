@@ -3,7 +3,7 @@
 
 int main()
 {
-    int func_num = 6, D = 2;
+    int func_num = 7, D = 2;
     std::vector<double> x {-55.276398, -70.429560};
 
     Function f(func_num, D);
