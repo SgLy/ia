@@ -102,7 +102,41 @@ func_t functions[30] = {
         }
         return res * res / (D - 1) / (D - 1);
     },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
+    // 7. Shifted and Rotated Lunacek Bi-Rastrigin's Function
+    [](const vec &x, const vec &o, const mat &M, int D) { 
+        auto t = multiply(M, multiply(minus(x, o, D), 600.0f / 100.0f, D), D);
+        double u0 = 2.5;
+        double d = 1;
+        double s = 1 - 1.0f / (2 * sqrt(D + 20) - 8.2);
+        double u1 = -sqrt((u0 * u0 - d) / s);
+        auto y = multiply(minus(t, o, D), 10.0f / 100.0f, D);
+        vec _x;
+        _x.resize(D);
+        for (int i = 0; i < D; i++) {
+            _x[i] = 2 * y[i];
+            _x[i] *= (t[i] >= 0) ? 1 : -1;
+            _x[i] += u0;
+        }
+        vec z;
+        z.resize(D);
+        for (int i = 0; i < D; i++) {
+            z[i] = _x[i] - u0;
+        }
+        double res1 = 0;
+        for (int i = 0; i < D; i++) {
+            res1 += (_x[i] - u0) * (_x[i] - u0);
+        }
+        double res2 = 0;
+        for (int i = 0; i < D; i++) {
+            res2 += d + s * (_x[i] - u1) * (_x[i] - u1);
+        }
+        double res = std::min(res1, res2);
+        for (int i = 0; i < D; i++) {
+            res += 10 * (1 - cos(2 * PI * z[i]));
+        }
+
+        return res;
+    },
     [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
     [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
     [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
