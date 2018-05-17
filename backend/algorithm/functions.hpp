@@ -170,7 +170,7 @@ class Function {
         {
             this->D = D;
             this->func_num = func_num;
-            auto filename = std::make_unique<char[]>(64);
+            auto filename = std::make_unique<char[]>(256);
 
             sprintf(filename.get(), "%s/shift_data_%d.txt", data_dir.c_str(),
                 func_num);

@@ -27,12 +27,12 @@ class Canvas extends Component {
       });
     });
 
-    this.io = io('http://localhost:5000/');
-    this.io.on('connection', (msg) => {
-      console.log('test');
-      this.io.emit('run');
+    const socket = io.connect('http://localhost:5000/');
+    socket.on('connected', (msg) => {
+      console.log('socket connected');
+      socket.emit('run');
     });
-    this.io.on('data', (msg) => {
+    socket.on('data', (msg) => {
       console.log(msg);
     });
   }
