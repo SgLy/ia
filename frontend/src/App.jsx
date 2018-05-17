@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import io from 'socket.io-client';
 import data from './data.json';
 
 class Canvas extends Component {
@@ -8,7 +9,6 @@ class Canvas extends Component {
     this.id = `canvas${parseInt(Math.random() * 1e16, 10).toString(16)}`;
     const miny = Math.min(...data.map(d => Math.min(...d)));
     const maxy = Math.max(...data.map(d => Math.max(...d)));
-    console.log(miny, maxy);
     this.colorMap = (v) => {
       let t = Math.sqrt((v - miny) / (maxy - miny));
       let c = 255 * t;
@@ -19,14 +19,21 @@ class Canvas extends Component {
   componentDidMount = () => {
     const ctx = document.getElementById(this.id).getContext('2d');
     const w = this.props.width / this.props.data.length;
-    console.log(w);
     this.props.data.forEach((r, i) => {
       const h = this.props.height / r.length;
-      console.log(h);
       r.forEach((c, j) => {
         ctx.fillStyle = this.colorMap(c);
         ctx.fillRect(i * w, j * h, w, h);
       });
+    });
+
+    this.io = io('http://localhost:5000/');
+    this.io.on('connection', (msg) => {
+      console.log('test');
+      this.io.emit('run');
+    });
+    this.io.on('data', (msg) => {
+      console.log(msg);
     });
   }
 
@@ -44,12 +51,13 @@ class Canvas extends Component {
 class App extends Component {
   render() {
     return (
-      <Canvas
-        width={400}
-        height={400}
-        data={data}
-      ></Canvas>
-      // <div>{colorMap(data[12][34])}</div>
+      <div>
+        <Canvas
+          width={400}
+          height={400}
+          data={data}
+        ></Canvas>
+      </div>
     );
   }
 }
