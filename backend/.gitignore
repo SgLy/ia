@@ -1,5 +1,8 @@
 # Binaries
 *.exe
 
+# CEC data
+algorithm/codes
+
 # NPM
 node_modules
