@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+}
+.control {
+  margin: 1em;
+  padding: 1em;
+}
+#display {
+  margin: 1em;
+  display: flex;
+  flex-direction: row;
+}
+#map {
+  flex: 1;
+  padding: 1em;
+}
+#select_d {
+  margin-left: 1em;
+}
+#button_run {
+  margin-left: 4em;
+}
