@@ -26,7 +26,7 @@
 using namespace std;
 
 int count2; //numbers of particles that have been reseted
-int n = 10; //dimension
+int n = 30; //dimension
 vector<double> gBest;//global best
 double gBestF;
 vector<double> ggBest;
@@ -85,7 +85,7 @@ void RandomPList(){
 	
 	gBestF = 1e100;
 	gBest.resize(n);
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < N; i++)
 		if (PList[i].pBestF < gBestF){
 			gBestF = PList[i].pBestF;
 			for (int j = 0; j < n; j++){
@@ -96,11 +96,6 @@ void RandomPList(){
 
 void init(){
 	RandomPList();
-	/*ggBestF = 1e100;
-	ggBest.resize(n);
-	for (int i = 0; i < n; i++){
-		ggBest[i] = 0.0;
-	}*/ 
 }
 void init_particle(Particle& p){
 	for (int i = 0; i < n; i++){
@@ -115,13 +110,13 @@ void init_particle(Particle& p){
 		}*/	
 }
 
-void save_result(){
+/*void save_result(){
 	if (gBestF < ggBestF){
 		ggBestF = gBestF;
 		for (int i = 0; i < n; i++)
 			ggBest[i] = gBest[i]; 		
 	}
-}
+}*/
 
 double func(vector<double> x, int n,  int func_num){ //return the value of F(x)
 	return f(x);
@@ -182,14 +177,9 @@ void update_global_2(){//Òì²½¸üÐÂgBest
 }
 
 void PSO(){
-	
-		//int count = 0;
 		for(int i = 0; i < loop; i++){
 			count2 = 0;
-			//double gBestF_old = gBestF;
 			update_global();
-			//if (gBestF_old == gBestF) count++;
-			//if (count > 100) break;
 			printf("round %d: %Lf  reset %d particles\n", i, gBestF,count2);
 		}
 		

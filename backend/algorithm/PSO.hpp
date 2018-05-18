@@ -85,7 +85,7 @@ void RandomPList(){
 	
 	gBestF = 1e100;
 	gBest.resize(n);
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < N; i++)
 		if (PList[i].pBestF < gBestF){
 			gBestF = PList[i].pBestF;
 			for (int j = 0; j < n; j++){
@@ -96,11 +96,6 @@ void RandomPList(){
 
 void init(){
 	RandomPList();
-	/*ggBestF = 1e100;
-	ggBest.resize(n);
-	for (int i = 0; i < n; i++){
-		ggBest[i] = 0.0;
-	}*/ 
 }
 void init_particle(Particle& p){
 	for (int i = 0; i < n; i++){
@@ -182,14 +177,10 @@ void update_global_2(){//异步更新gBest
 }
 
 void PSO(){
-	
-		//int count = 0;
+
 		for(int i = 0; i < loop; i++){
 			count2 = 0;
-			//double gBestF_old = gBestF;
 			update_global();
-			//if (gBestF_old == gBestF) count++;
-			//if (count > 100) break;
 			printf("round %d: %Lf  reset %d particles\n", i, gBestF,count2);
 		}
 		
