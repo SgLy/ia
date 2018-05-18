@@ -10,6 +10,10 @@ import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 
+import md5 from 'md5';
+
+import { Bar } from 'react-chartjs-2';
+
 import io from 'socket.io-client';
 
 import Canvas from './canvas.jsx';
@@ -25,7 +29,10 @@ class App extends Component {
       func: 1,
       D: 2,
       mapLength: 0,
-      mapValueRange: { min: 0, max: 0 }
+      mapValueRange: { min: 0, max: 0 },
+      rowDigest: 0,
+      best: [],
+      distrib: [],
     };
 
     this.rows = [];
@@ -51,7 +58,8 @@ class App extends Component {
   }
 
   run = () => {
-    console.log({ func: this.state.func, D: this.state.D });
+    // eslint-disable-next-line no-console
+    console.log(`Request function ${this.state.func} with ${this.state.D} dim`);
     this.setState({
       mapLength: 0,
       mapValueRange: { max: 0, min: 0 }
@@ -137,14 +145,60 @@ class App extends Component {
           </Button>
         </Paper>
         <div id="display">
-          <Paper id="map">
-            {this.state.D === 2 ? <Canvas
+          {this.state.D === 2 ? <Paper id="map">
+            <Canvas
               width={400}
               height={400}
               mapLength={this.state.mapLength}
               valueRange={this.state.mapValueRange}
               requestNewRow={this.digest}
-            ></Canvas> : ''}
+            ></Canvas>
+          </Paper> : ''}
+          <Paper id='chart_best'>
+            <Bar
+              key={md5(this.state.best)}
+              options={{
+                legend: { display: false },
+                scales: {
+                  // xAxes: [{ barPercentage: 1, categoryPercentage: 1 }],
+                  yAxes: [{ ticks: { beginAtZero: true } }]
+                },
+                animation: {
+                  duration: 0
+                },
+              }}
+              data={{
+                labels: Array(this.state.best.length).fill(0).map((_, i) => i),
+                datasets: [{
+                  data: this.state.best,
+                  backgroundColor: '#123456',
+                  borderWidth: 0
+                }]
+              }}
+            />
+          </Paper>
+          <Paper id='chart_distrib'>
+            <Bar
+              key={md5(this.state.distrib)}
+              options={{
+                legend: { display: false },
+                scales: {
+                  // xAxes: [{ barPercentage: 1, categoryPercentage: 1 }],
+                  yAxes: [{ ticks: { beginAtZero: true } }]
+                },
+                animation: {
+                  duration: 0
+                },
+              }}
+              data={{
+                labels: Array(this.state.distrib.length).fill(0).map((_, i) => i),
+                datasets: [{
+                  data: this.state.distrib,
+                  backgroundColor: '#123456',
+                  borderWidth: 0
+                }]
+              }}
+            />
           </Paper>
         </div>
       </div>
