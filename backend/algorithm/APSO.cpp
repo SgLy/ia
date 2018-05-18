@@ -26,7 +26,7 @@
 using namespace std;
 
 int count2; //numbers of particles that have been reseted
-int n = 30; //dimension
+int n = 10; //dimension
 vector<double> gBest;//global best
 double gBestF;
 vector<double> ggBest;
@@ -102,12 +102,12 @@ void init_particle(Particle& p){
 			p.x[i] = random(-MAX, MAX);
 			p.v[i] = random(-Vmax, Vmax);
 		}
-		/*double fitness = f(p.x);
-		if (fitness < p.pBestF){
+		double fitness = f(p.x);
+		if (1){
 			p.pBestF = fitness;
 			for (int i = 0; i < n; i++)
 				p.pBest[i] = p.x[i];
-		}*/	
+		}
 }
 
 /*void save_result(){
@@ -124,8 +124,11 @@ double func(vector<double> x, int n,  int func_num){ //return the value of F(x)
 
 void update_single(Particle& p){
 	for (int i = 0; i < n; i++){
-		p.v[i] = w * (p.v[i] + (p.pBest[i] - p.x[i]) * c1 * rand()/double(RAND_MAX) + (gBest[i]-p.x[i]) * c2 * rand()/double(RAND_MAX) );
-
+		p.v[i] =  (w* p.v[i] + (p.pBest[i] - p.x[i]) * c1 * rand()/double(RAND_MAX) + (gBest[i]-p.x[i]) * c2 * rand()/double(RAND_MAX) );
+		if (p.v[i] > Vmax)
+			p.v[i] = Vmax;
+		else if (p.v[i] < -Vmax)
+			p.v[i] = -Vmax;
 		double d = distance(p);
 		double v = velocity(p);
 		if (d < u && v < e){
