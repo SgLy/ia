@@ -153,6 +153,14 @@ void update_single(Particle& p){
 void update_global(){//同步更新gBest 
 	for(int i = 0; i < N; i++)
 		update_single(PList[i]);
+
+	if (n==2){
+		auto f = newFile();
+		for(int i = 0; i < N; i++)
+			for (int j = 0; j < n; j++)
+				fprintf(f.get(), "%lf%c", PList[i].x[j], i == n - 1 ? '\n' : ' ');
+	}
+	
 	for (int i = 0; i < N; i++){
 		double tmp = func(PList[i].pBest, n, func_num);
 		if (tmp < gBestF){
