@@ -51,6 +51,17 @@ class App extends Component {
     this.socket.on('mapValueRange', (mapValueRange) => {
       this.setState({ mapValueRange });
     });
+    this.socket.on('round', (round) => {
+      const best = this.state.best;
+      best.push({
+        label: round.round,
+        value: round.best
+      });
+      this.setState({ best });
+    });
+    this.socket.on('best', (best) => {
+      console.log(best);
+    });
   }
 
   digest = () => {
@@ -62,7 +73,8 @@ class App extends Component {
     console.log(`Request function ${this.state.func} with ${this.state.D} dim`);
     this.setState({
       mapLength: 0,
-      mapValueRange: { max: 0, min: 0 }
+      mapValueRange: { max: 0, min: 0 },
+      best: []
     });
     this.rows = [];
     this.socket.emit('run', { func: this.state.func, D: this.state.D });
@@ -168,9 +180,9 @@ class App extends Component {
                 },
               }}
               data={{
-                labels: Array(this.state.best.length).fill(0).map((_, i) => i),
+                labels: this.state.best.map(r => r.label),
                 datasets: [{
-                  data: this.state.best,
+                  data: this.state.best.map(r => r.value),
                   backgroundColor: '#123456',
                   borderWidth: 0
                 }]

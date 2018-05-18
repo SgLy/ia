@@ -12,7 +12,7 @@ const double PI = acos(-1);
 typedef std::vector<double> vec;
 typedef std::vector<vec> mat;
 
-vec minus(const vec &a, const vec &b, int D)
+vec sub(const vec &a, const vec &b, int D)
 {
     vec res;
     res.resize(D);
@@ -21,7 +21,7 @@ vec minus(const vec &a, const vec &b, int D)
     return res;
 }
 
-vec multiply(const mat &m, const vec &v, int D)
+vec mul(const mat &m, const vec &v, int D)
 {
     vec res;
     res.resize(D);
@@ -33,7 +33,7 @@ vec multiply(const mat &m, const vec &v, int D)
     return res;
 }
 
-vec multiply(const vec &v, const double x, int D)
+vec mul(const vec &v, const double x, int D)
 {
     vec res;
     res.resize(D);
@@ -46,7 +46,7 @@ typedef std::function<double(const vec&, const vec&, const mat&, int)> func_t;
 func_t functions[30] = {
     // 1. Bent Cigar Function
     [](const vec &x, const vec &o, const mat &M, int D) {
-        auto t = multiply(M, minus(x, o, D), D);
+        auto t = mul(M, sub(x, o, D), D);
         double res = 0;
         for (int i = 1; i < D; ++i)
             res += t[i] * t[i];
@@ -54,7 +54,7 @@ func_t functions[30] = {
     },
     // 2. Sum of Different Power Function
     [](const vec &x, const vec &o, const mat &M, int D) {
-        auto t = multiply(M, minus(x, o, D), D);
+        auto t = mul(M, sub(x, o, D), D);
         double res = 0;
         for (int i = 0; i < D; ++i)
             res += pow(fabs(t[i]), i + 2);
@@ -62,7 +62,7 @@ func_t functions[30] = {
     },
     // 3. Zakharov Function
     [](const vec &x, const vec &o, const mat &M, int D) {
-        auto t = multiply(M, minus(x, o, D), D);
+        auto t = mul(M, sub(x, o, D), D);
         double res = 0;
         for (int i = 0; i < D; ++i)
             res += t[i] * t[i];
@@ -73,7 +73,7 @@ func_t functions[30] = {
     },
     // 4. Shifted and Rotated Rosenbrock’s Function
     [](const vec &x, const vec &o, const mat &M, int D) {
-        auto t = multiply(M, multiply(minus(x, o, D), 2.048 / 100, D), D);
+        auto t = mul(M, mul(sub(x, o, D), 2.048 / 100, D), D);
         for (int i = 0; i < D; ++i)
             t[i] += 1;
         double res = 0;
@@ -83,7 +83,7 @@ func_t functions[30] = {
     },
     // 5. Shifted and Rotated Rastrigin’s Function
     [](const vec &x, const vec &o, const mat &M, int D) {
-        auto t = multiply(M, multiply(minus(x, o, D), 5.12 / 100, D), D);
+        auto t = mul(M, mul(sub(x, o, D), 5.12 / 100, D), D);
         for (int i = 0; i < D; ++i)
             t[i] += 1;
         double res = 0;
@@ -93,7 +93,7 @@ func_t functions[30] = {
     },
     // 6. Shifted and Rotated Schaffer’s F7 Function
     [](const vec &x, const vec &o, const mat &M, int D) {
-        auto t = multiply(M, multiply(minus(x, o, D), 0.5 / 100, D), D);
+        auto t = mul(M, mul(sub(x, o, D), 0.5 / 100, D), D);
         double res = 0;
         for (int i = 0; i < D - 1; i++) {
             double s = pow(t[i] * t[i] + t[i + 1] * t[i + 1], 0.5);
@@ -104,12 +104,12 @@ func_t functions[30] = {
     },
     // 7. Shifted and Rotated Lunacek Bi-Rastrigin's Function
     [](const vec &x, const vec &o, const mat &M, int D) { 
-        auto t = multiply(M, multiply(minus(x, o, D), 600.0f / 100.0f, D), D);
+        auto t = mul(M, mul(sub(x, o, D), 600.0f / 100.0f, D), D);
         double u0 = 2.5;
         double d = 1;
         double s = 1 - 1.0f / (2 * sqrt(D + 20) - 8.2);
         double u1 = -sqrt((u0 * u0 - d) / s);
-        auto y = multiply(minus(t, o, D), 10.0f / 100.0f, D);
+        auto y = mul(sub(t, o, D), 10.0f / 100.0f, D);
         vec _x;
         _x.resize(D);
         for (int i = 0; i < D; i++) {
@@ -198,9 +198,10 @@ class Function {
         double operator() (const vec &x) {
             return this->f(x) + func_num * 100;
         }
-        void dumpMap(double step = 0.25) {
+        void dumpMap(std::string filename, double step = 0.25) {
             if (this->D != 2)
                 return;
+
             mat map;
             double minV = 1e10, maxV = -1e10;
             for (double i = -100; i <= 100; i += step) {
@@ -213,17 +214,28 @@ class Function {
                 }
                 map.push_back(row);
             }
-            printf("{\"type\":\"mapRowCount\",\"data\":%zd}\n", map.size());
-            printf("{\"type\":\"mapValueRange\",\"data\":{\"min\":%.5lf,\"max\":%.5lf}}\n", minV, maxV);
-            for (auto it = map.begin(); it != map.end(); ++it) {
-                printf("{\"type\":\"mapRow\",\"data\":{\"index\": %d,\"values\":[", it - map.begin());
-                auto lastAdd = &(*--it->end());
-                for (const auto &v: *it) {
-                    printf("%.2lf", v);
+
+            int cnt = 0;
+            auto newFile = [&]() {
+                std::string name = ("tmp/map" + std::to_string(cnt++)).c_str();
+                return std::unique_ptr<FILE, decltype(&fclose)>
+                    (fopen(name.c_str(), "w"), &fclose);
+            };
+
+            auto f = newFile();
+            fprintf(f.get(), R"( {"type":"mapRowCount","data":%zd} )", map.size());
+            f = newFile();
+            fprintf(f.get(), R"( {"type":"mapValueRange","data":{"min":%.5lf,"max":%.5lf}} )", minV, maxV);
+            for (size_t i = 0; i < map.size(); ++i) {
+                f = newFile();
+                fprintf(f.get(), R"( {"type":"mapRow","data":{"index": %zd,"values":[ )", i);
+                auto lastAdd = &(*--map[i].end());
+                for (const auto &v: map[i]) {
+                    fprintf(f.get(), "%.2lf", v);
                     if (&v != lastAdd)
-                        putchar(',');
+                        fprintf(f.get(), ",");
                 }
-                printf("]}}\n");
+                fprintf(f.get(), "]}}");
             }
         }
 

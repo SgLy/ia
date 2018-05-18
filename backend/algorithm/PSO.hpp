@@ -1,16 +1,16 @@
-/*
-  CEC17 Test Function Suite for Single Objective Optimization
-  Noor Awad (email: noor0029@ntu.edu.sg) 
-  Sep. 10th 2016
-*/
 #include <math.h>
-#include <WINDOWS.H>    
 #include <stdio.h>
 #include <math.h>
 #include <malloc.h>
 #include <vector>
 #include <ctime>
-#include  "functions.hpp"
+#include "functions.hpp"
+
+int cnt = 0;
+auto newFile = [&]() {
+	std::string name = ("tmp/PSO" + std::to_string(cnt++)).c_str();
+	return std::unique_ptr<FILE, decltype(&fclose)>(fopen(name.c_str(), "w"), &fclose);
+};
 
 #define N 20
 #define MAX 100
@@ -178,27 +178,31 @@ void update_global_2(){//异步更新gBest
 
 void PSO(){
 
+		int t = 1;
 		for(int i = 0; i < loop; i++){
 			count2 = 0;
 			update_global();
-			printf("round %d: %Lf  reset %d particles\n", i, gBestF,count2);
+			if (i == t) {
+				t = int(ceil((t < 10000 ? 1.05f : 2.0f) * t));
+				printf("%d, ", t);
+				auto f = newFile();
+				fprintf(f.get(), R"( {"type": "round", "data":{ "round": %d, "best": %lf, "particles": %d }} )", i, gBestF, count2);
+			}
 		}
-		
-	
 } 
 
 
 int Run(int func_num, int n)
 {
-	
+	puts("run");
 	srand((unsigned)time(NULL));
 	init();		
 	PSO();
-	printf("best result: %Lf\n", gBestF);
-	printf("vector x:");
+	auto f = newFile();
+	fprintf(f.get(), R"( { "type": "best", "data": { "value": %lf, "vector": [ )", gBestF);
 	for (int i = 0; i < n; i++)
-		printf(" %Lf", gBest[i]);
-
+		fprintf(f.get(), "%lf%c", gBest[i], i == n - 1 ? ' ' : ',');
+	fprintf(f.get(), R"( ]}} )");
 
 	return 0;
 }
