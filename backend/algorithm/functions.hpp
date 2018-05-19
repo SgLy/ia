@@ -213,9 +213,9 @@ public:
             return;
 
         mat map;
-        for (double i = -100; i <= 100; i += step) {
+        for (double j = 100; j >= -100; j -= step) {
             vec row;
-            for (double j = -100; j <= 100; j += step)
+            for (double i = -100; i <= 100; i += step)
                 row.push_back(this->f(vec{ i, j }));
             map.push_back(row);
         }

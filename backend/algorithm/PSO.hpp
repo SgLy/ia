@@ -185,10 +185,10 @@ void update_global_2()
 
 void PSO()
 {
-    for (int i = 0; i < loop / 1000; i++) {
+    for (int i = 0; i < 50; i++) {
         count2 = 0;
         update_global();
-        if (i % 100 == 0) {
+        // if (i % 100 == 0) {
             auto f = newFile();
             fprintf(f.get(), R"( {"type": "round", "data":{ "round": %d, "best": %lf, "particles": %d }} )", i, gBestF, count2);
 
@@ -202,7 +202,7 @@ void PSO()
                     fprintf(f.get(), "%lf%c", PList[i].x[j], j == n - 1 ? ']' : ',');
                 fprintf(f.get(), i == N - 1 ? "]}" : ",");
             }
-        }
+        // }
     }
 }
 

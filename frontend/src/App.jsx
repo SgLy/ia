@@ -26,10 +26,11 @@ class App extends Component {
     this.state = {
       func: 1,
       D: 2,
-      map: [[0]],
+      map: [[]],
+      particles: [],
       rowDigest: 0,
       best: [],
-      distrib: [],
+      distrib: []
     };
 
     this.socket = io.connect('http://localhost:5000/');
@@ -55,8 +56,17 @@ class App extends Component {
     this.socket.on('best', (best) => {
       console.log(best);
     });
-    this.socket.on('particles', (best) => {
-      console.log(best);
+    this.particles = [];
+    this.socket.on('particles', (particles) => {
+      this.particles.push(particles);
+      if (this.interval === undefined)
+        this.interval = setInterval(() => {
+          if (this.particles.length === 0) {
+            clearInterval(this.interval);
+            this.interval = undefined;
+          } else
+            this.setState({ particles: this.particles.shift() });
+        }, 500);
     });
   }
 
@@ -148,7 +158,10 @@ class App extends Component {
         </Paper>
         <div id="display">
           {this.state.D === 2 ? <Paper id="map">
-            <Canvas map={this.state.map}></Canvas>
+            <Canvas
+              map={this.state.map}
+              particles={this.state.particles}
+            ></Canvas>
           </Paper> : ''}
           <Paper id='chart_best'>
             <Bar

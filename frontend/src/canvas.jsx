@@ -57,11 +57,34 @@ export default class Canvas extends Component {
 
   render() {
     return (
-      <canvas
-        width={this.width}
-        height={this.height}
-        id={this.id}
-      ></canvas>
+      <div className="canvas" style={{ position: 'relative' }}>
+        <canvas
+          width={this.width}
+          height={this.height}
+          id={this.id}
+        ></canvas>
+        <div className="particles" style={{
+          position: 'absolute',
+          height: this.height,
+          width: this.width,
+          top: 0,
+          left: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0)'
+        }}>
+          {this.props.particles.map(p => (
+            <div className="particle" style={{
+              position: 'absolute',
+              height: 5,
+              width: 5,
+              borderRadius: '50%',
+              top: (100 - p[1]) / 200 * this.height - 2.5,
+              left: (p[0] + 100) / 200 * this.width - 2.5,
+              backgroundColor: 'blue',
+              transition: 'all 0.2s ease'
+            }}></div>
+          ))}
+        </div>
+      </div>
     );
   }
 }
