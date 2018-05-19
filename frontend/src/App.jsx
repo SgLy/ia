@@ -41,32 +41,41 @@ class App extends Component {
     this.socket.on('map', (map) => {
       this.setState({ map });
     });
+    this.round = [];
     this.socket.on('round', (round) => {
-      setTimeout(() => {
-        const best = this.state.best;
-        best.push({
-          label: round.round,
-          value: round.best
-        });
-        if (best.length > 20)
-          best.shift();
-        this.setState({ best });
-      }, 0);
-    });
-    this.socket.on('best', (best) => {
-      console.log(best);
+      this.round.push(round);
+      if (this.roundInterval === undefined)
+        this.roundInterval = setInterval(() => {
+          if (this.round.length === 0) {
+            clearInterval(this.roundInterval);
+            this.roundInterval = undefined;
+          } else {
+            const best = this.state.best;
+            const round = this.round.shift();
+            best.push({
+              label: round.round,
+              value: round.best
+            });
+            if (best.length > 10)
+              best.shift();
+            this.setState({ best });
+          }
+        }, 500);
     });
     this.particles = [];
     this.socket.on('particles', (particles) => {
       this.particles.push(particles);
-      if (this.interval === undefined)
-        this.interval = setInterval(() => {
+      if (this.particalInterval === undefined)
+        this.particalInterval = setInterval(() => {
           if (this.particles.length === 0) {
-            clearInterval(this.interval);
-            this.interval = undefined;
+            clearInterval(this.particalInterval);
+            this.particalInterval = undefined;
           } else
             this.setState({ particles: this.particles.shift() });
         }, 500);
+    });
+    this.socket.on('best', (best) => {
+      console.log(best);
     });
   }
 
