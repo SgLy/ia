@@ -6,77 +6,60 @@ export default class Canvas extends Component {
   constructor(props) {
     super(props);
     this.id = `canvas${parseInt(Math.random() * 1e16, 10).toString(16)}`;
-    this.state = {
-      mapLength: 0,
-      range: { min: 0, max: 0 }
-    };
-    this.colorMap = () => '#eee';
+    this.state = { map: props.map };
+    // this.height = this.state.map.length;
+    // this.width = this.state.map[0].length;
+    this.height = this.width = 401;
   }
 
   componentDidMount = () => {
     this.ctx = document.getElementById(this.id).getContext('2d');
     this.ctx.globalAlpha = 1;
-    this.redraw();
+    this.ctx.fillStyle = '#eee';
+    this.ctx.fillRect(0, 0, this.props.width, this.props.height);
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.setRange(nextProps.valueRange);
-    if (nextProps.mapLength !== this.state.mapLength) {
-      this.setState({
-        mapLength: nextProps.mapLength
-      }, () => {
+    if (this.state.map.length === nextProps.map.length)
+      return;
+    this.setState({ map: nextProps.map }, () => {
+      // this.height = this.state.map.length;
+      // this.width = this.state.map[0].length;
+      setTimeout(() => {
         this.redraw();
-      });
-      this.w = Math.round(this.props.width / nextProps.mapLength);
-    }
-  }
-
-  setRange = (range) => {
-    if (range.min === this.state.min && range.max === this.state.max)
-      return;
-    this.colorMap = (v) => {
-      let t = Math.sqrt((v - range.min) / (range.max - range.min));
-      let c = Math.round(255 * t);
-      return `rgb(${c}, ${255 - c}, 0)`;
-    };
-    this.setState(range);
-  }
-
-  redraw = () => {
-    this.ctx.fillStyle = '#eee';
-    this.ctx.fillRect(0, 0, this.props.width, this.props.height);
-    if (this.state.mapLength === 0)
-      return;
-    this.drawCount = 0;
-    window.requestAnimationFrame((time) => {
-      this.redrawRow(time);
+      }, 0);
     });
   }
 
-  redrawRow = (time, row) => {
-    if (row !== undefined) {
-      ++this.drawCount;
-      // eslint-disable-next-line no-console
-      console.log(`Draw row ${row.index} at ${time}`);
-      const left = Math.round(row.index * this.w);
-      let top = 0;
-      const h = Math.round(this.props.height / row.values.length);
-      row.values.forEach(c => {
-        this.ctx.fillStyle = this.colorMap(c);
-        this.ctx.fillRect(left, top += h, this.w, h);
+  redraw = () => {
+    console.time('draw');
+    const max = Math.max(...this.state.map.map(r => Math.max(...r)));
+    const min = Math.min(...this.state.map.map(r => Math.min(...r)));
+    this.colorMap = (v) => {
+      let t = Math.sqrt((v - min) / (max - min));
+      let c = Math.round(255 * t);
+      return [c, 255 - c, 0, 255];
+    };
+    // window.requestAnimationFrame((time) => {
+    //   this.redrawRow(time, 0);
+    // });
+    let imageData = this.ctx.getImageData(0, 0, this.width, this.height);
+    let data = imageData.data, i = 0;
+    this.state.map.forEach(row => {
+      row.forEach(value => {
+        [data[i], data[i + 1], data[i + 2], data[i + 3]] = this.colorMap(value);
+        i += 4;
       });
-    }
-    if (this.drawCount < this.state.mapLength)
-      window.requestAnimationFrame((time) => {
-        this.redrawRow(time, this.props.requestNewRow());
-      });
+    });
+    this.ctx.putImageData(imageData, 0, 0);
+    console.timeEnd('draw');
   }
 
   render() {
     return (
       <canvas
-        width={this.props.width}
-        height={this.props.height}
+        width={this.width}
+        height={this.height}
         id={this.id}
       ></canvas>
     );

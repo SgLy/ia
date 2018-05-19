@@ -1,18 +1,19 @@
 #ifndef FUNCTIONS_HPP_INCLUDED
 #define FUNCTIONS_HPP_INCLUDED
 
+#include <cmath>
+#include <cstdarg>
+#include <cstdio>
 #include <functional>
 #include <memory>
 #include <vector>
-#include <cstdio>
-#include <cmath>
 
 const double PI = acos(-1);
 
 typedef std::vector<double> vec;
 typedef std::vector<vec> mat;
 
-vec sub(const vec &a, const vec &b, int D)
+vec sub(const vec& a, const vec& b, int D)
 {
     vec res;
     res.resize(D);
@@ -21,7 +22,7 @@ vec sub(const vec &a, const vec &b, int D)
     return res;
 }
 
-vec mul(const mat &m, const vec &v, int D)
+vec mul(const mat& m, const vec& v, int D)
 {
     vec res;
     res.resize(D);
@@ -33,7 +34,7 @@ vec mul(const mat &m, const vec &v, int D)
     return res;
 }
 
-vec mul(const vec &v, const double x, int D)
+vec mul(const vec& v, const double x, int D)
 {
     vec res;
     res.resize(D);
@@ -45,7 +46,7 @@ vec mul(const vec &v, const double x, int D)
 typedef std::function<double(const vec&, const vec&, const mat&, int)> func_t;
 func_t functions[30] = {
     // 1. Bent Cigar Function
-    [](const vec &x, const vec &o, const mat &M, int D) {
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, sub(x, o, D), D);
         double res = 0;
         for (int i = 1; i < D; ++i)
@@ -53,7 +54,7 @@ func_t functions[30] = {
         return res * 1e6 + t[0] * t[0];
     },
     // 2. Sum of Different Power Function
-    [](const vec &x, const vec &o, const mat &M, int D) {
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, sub(x, o, D), D);
         double res = 0;
         for (int i = 0; i < D; ++i)
@@ -61,7 +62,7 @@ func_t functions[30] = {
         return res;
     },
     // 3. Zakharov Function
-    [](const vec &x, const vec &o, const mat &M, int D) {
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, sub(x, o, D), D);
         double res = 0;
         for (int i = 0; i < D; ++i)
@@ -72,7 +73,7 @@ func_t functions[30] = {
         return res + pow(tmp, 2) + pow(tmp, 4);
     },
     // 4. Shifted and Rotated Rosenbrock’s Function
-    [](const vec &x, const vec &o, const mat &M, int D) {
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, mul(sub(x, o, D), 2.048 / 100, D), D);
         for (int i = 0; i < D; ++i)
             t[i] += 1;
@@ -82,7 +83,7 @@ func_t functions[30] = {
         return res;
     },
     // 5. Shifted and Rotated Rastrigin’s Function
-    [](const vec &x, const vec &o, const mat &M, int D) {
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, mul(sub(x, o, D), 5.12 / 100, D), D);
         for (int i = 0; i < D; ++i)
             t[i] += 1;
@@ -92,7 +93,7 @@ func_t functions[30] = {
         return res;
     },
     // 6. Shifted and Rotated Schaffer’s F7 Function
-    [](const vec &x, const vec &o, const mat &M, int D) {
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, mul(sub(x, o, D), 0.5 / 100, D), D);
         double res = 0;
         for (int i = 0; i < D - 1; i++) {
@@ -103,7 +104,7 @@ func_t functions[30] = {
         return res * res / (D - 1) / (D - 1);
     },
     // 7. Shifted and Rotated Lunacek Bi-Rastrigin's Function
-    [](const vec &x, const vec &o, const mat &M, int D) { 
+    [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, mul(sub(x, o, D), 600.0f / 100.0f, D), D);
         double u0 = 2.5;
         double d = 1;
@@ -137,113 +138,117 @@ func_t functions[30] = {
 
         return res;
     },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; },
-    [](const vec &x, const vec &o, const mat &M, int D) { return 0.0f; }};
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
+    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; }
+};
 
 class Function {
-    public:
-        Function(
-            int func_num,
-            int D = 2,
-            std::string data_dir = "codes/C version/input_data")
-        {
-            this->D = D;
-            this->func_num = func_num;
-            auto filename = std::make_unique<char[]>(256);
+public:
+    Function()
+    {
+        D = 0;
+        func_num = 0;
+        f = [](const vec& x) { return 0.0f; };
+    }
+    Function(
+        int func_num,
+        int D = 2,
+        std::string data_dir = "codes/C version/input_data")
+    {
+        this->D = D;
+        this->func_num = func_num;
+        auto filename = std::make_unique<char[]>(256);
 
-            sprintf(filename.get(), "%s/shift_data_%d.txt", data_dir.c_str(),
-                func_num);
-            auto file = std::unique_ptr<FILE, decltype(&fclose)>(
-                fopen(filename.get(), "r"), &fclose);
-            o.resize(D);
-            for (int i = 0; i < D; ++i)
-                fscanf(file.get(), "%lf", &o[i]);
+        sprintf(filename.get(), "%s/shift_data_%d.txt", data_dir.c_str(),
+            func_num);
+        auto file = std::unique_ptr<FILE, decltype(&fclose)>(
+            fopen(filename.get(), "r"), &fclose);
+        o.resize(D);
+        for (int i = 0; i < D; ++i)
+            fscanf(file.get(), "%lf", &o[i]);
 
-            sprintf(filename.get(), "%s/M_%d_D%d.txt", data_dir.c_str(),
-                func_num, D);
-            file = std::unique_ptr<FILE, decltype(&fclose)>(
-                fopen(filename.get(), "r"), &fclose);
-            M.resize(D);
-            for (int i = 0; i < D; ++i) {
-                M[i].resize(D);
-                for (int j = 0; j < D; ++j)
-                    fscanf(file.get(), "%lf", &M[i][j]);
-            }
-
-            f = std::bind(
-                functions[func_num - 1],
-                std::placeholders::_1, o, M, D);
-        }
-        double operator() (const vec &x) {
-            return this->f(x) + func_num * 100;
-        }
-        void dumpMap(std::string filename, double step = 0.25) {
-            if (this->D != 2)
-                return;
-
-            mat map;
-            double minV = 1e10, maxV = -1e10;
-            for (double i = -100; i <= 100; i += step) {
-                vec row;
-                for (double j = -100; j <= 100; j += step) {
-                    double v = this->f(vec{i, j});
-                    row.push_back(v);
-                    minV = std::min(v, minV);
-                    maxV = std::max(v, maxV);
-                }
-                map.push_back(row);
-            }
-
-            int cnt = 0;
-            auto newFile = [&]() {
-                std::string name = ("tmp/map" + std::to_string(cnt++)).c_str();
-                return std::unique_ptr<FILE, decltype(&fclose)>
-                    (fopen(name.c_str(), "w"), &fclose);
-            };
-
-            auto f = newFile();
-            fprintf(f.get(), R"( {"type":"mapRowCount","data":%zd} )", map.size());
-            f = newFile();
-            fprintf(f.get(), R"( {"type":"mapValueRange","data":{"min":%.5lf,"max":%.5lf}} )", minV, maxV);
-            for (size_t i = 0; i < map.size(); ++i) {
-                f = newFile();
-                fprintf(f.get(), R"( {"type":"mapRow","data":{"index": %zd,"values":[ )", i);
-                auto lastAdd = &(*--map[i].end());
-                for (const auto &v: map[i]) {
-                    fprintf(f.get(), "%.2lf", v);
-                    if (&v != lastAdd)
-                        fprintf(f.get(), ",");
-                }
-                fprintf(f.get(), "]}}");
-            }
+        sprintf(filename.get(), "%s/M_%d_D%d.txt", data_dir.c_str(),
+            func_num, D);
+        file = std::unique_ptr<FILE, decltype(&fclose)>(
+            fopen(filename.get(), "r"), &fclose);
+        M.resize(D);
+        for (int i = 0; i < D; ++i) {
+            M[i].resize(D);
+            for (int j = 0; j < D; ++j)
+                fscanf(file.get(), "%lf", &M[i][j]);
         }
 
-    private:
-        std::function<double(const vec &)> f;
-        int D, func_num;
-        vec o;
-        mat M;
+        f = std::bind(
+            functions[func_num - 1],
+            std::placeholders::_1, o, M, D);
+    }
+    double operator()(const vec& x)
+    {
+        return this->f(x) + func_num * 100;
+    }
+    void dumpMap(double step = 0.25)
+    {
+        if (this->D != 2)
+            return;
+
+        mat map;
+        for (double i = -100; i <= 100; i += step) {
+            vec row;
+            for (double j = -100; j <= 100; j += step)
+                row.push_back(this->f(vec{ i, j }));
+            map.push_back(row);
+        }
+
+        auto f = std::unique_ptr<FILE, decltype(&fclose)>(
+            fopen("tmp/map", "w"), &fclose);
+        auto print = [&](const char fmt[], ...) {
+            va_list l;
+            va_start(l, fmt);
+            vfprintf(f.get(), fmt, l);
+        };
+        print(R"( {"type":"map","data":[ )");
+
+        for (size_t i = 0; i < map.size(); ++i) {
+            print("[");
+            auto lastAdd = &(*--map[i].end());
+            for (const auto& v : map[i]) {
+                print("%.2lf", v);
+                if (&v != lastAdd)
+                    print(",");
+            }
+            print("]");
+            if (i != map.size() - 1)
+                print(",");
+        }
+        print("]}");
+    }
+
+private:
+    std::function<double(const vec&)> f;
+    int D, func_num;
+    vec o;
+    mat M;
 };
 
 #endif

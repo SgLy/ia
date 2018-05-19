@@ -1,14 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
+import {
+  AppBar, Toolbar, Typography,
+  Paper,
+  Select, MenuItem,
+  Button,
+  FormControl, InputLabel,
+} from '@material-ui/core';
 
 import md5 from 'md5';
 
@@ -19,7 +18,6 @@ import io from 'socket.io-client';
 import Canvas from './canvas.jsx';
 
 import './App.css';
-import { InputLabel } from '@material-ui/core';
 /* eslint-enable no-unused-vars */
 
 class App extends Component {
@@ -28,55 +26,47 @@ class App extends Component {
     this.state = {
       func: 1,
       D: 2,
-      mapLength: 0,
-      mapValueRange: { min: 0, max: 0 },
+      map: [[0]],
       rowDigest: 0,
       best: [],
       distrib: [],
     };
-
-    this.rows = [];
 
     this.socket = io.connect('http://localhost:5000/');
     this.socket.on('connected', () => {
       // eslint-disable-next-line no-console
       console.log('socket connected');
     });
-    this.socket.on('mapRowCount', (mapLength) => {
-      this.setState({ mapLength });
-    });
-    this.socket.on('mapRow', (mapRow) => {
-      this.rows.push(mapRow);
-    });
-    this.socket.on('mapValueRange', (mapValueRange) => {
-      this.setState({ mapValueRange });
+    this.socket.on('map', (map) => {
+      this.setState({ map });
     });
     this.socket.on('round', (round) => {
-      const best = this.state.best;
-      best.push({
-        label: round.round,
-        value: round.best
-      });
-      this.setState({ best });
+      setTimeout(() => {
+        const best = this.state.best;
+        best.push({
+          label: round.round,
+          value: round.best
+        });
+        if (best.length > 20)
+          best.shift();
+        this.setState({ best });
+      }, 0);
     });
     this.socket.on('best', (best) => {
       console.log(best);
     });
-  }
-
-  digest = () => {
-    return this.rows.length === 0 ? undefined : this.rows.shift();
+    this.socket.on('particles', (best) => {
+      console.log(best);
+    });
   }
 
   run = () => {
     // eslint-disable-next-line no-console
     console.log(`Request function ${this.state.func} with ${this.state.D} dim`);
     this.setState({
-      mapLength: 0,
-      mapValueRange: { max: 0, min: 0 },
+      map: [[]],
       best: []
     });
-    this.rows = [];
     this.socket.emit('run', { func: this.state.func, D: this.state.D });
   }
 
@@ -158,13 +148,7 @@ class App extends Component {
         </Paper>
         <div id="display">
           {this.state.D === 2 ? <Paper id="map">
-            <Canvas
-              width={400}
-              height={400}
-              mapLength={this.state.mapLength}
-              valueRange={this.state.mapValueRange}
-              requestNewRow={this.digest}
-            ></Canvas>
+            <Canvas map={this.state.map}></Canvas>
           </Paper> : ''}
           <Paper id='chart_best'>
             <Bar
@@ -173,7 +157,7 @@ class App extends Component {
                 legend: { display: false },
                 scales: {
                   // xAxes: [{ barPercentage: 1, categoryPercentage: 1 }],
-                  yAxes: [{ ticks: { beginAtZero: true } }]
+                  // yAxes: [{ ticks: { beginAtZero: true } }]
                 },
                 animation: {
                   duration: 0

@@ -40,25 +40,9 @@ io.sockets.on('connection', (socket) => {
     let algo = spawn('main', [params.func, params.D], {
       cwd: path.resolve(__dirname, 'algorithm')
     });
-    // let trailing = '';
-    // algo.stdout.on('data', (d) => {
-    //   console.log('new');
-    //   const alldata = (trailing + d.toString()).split('\n');
-    //   alldata.forEach((data, i) => {
-    //     if (data.length === 0)
-    //       return;
-    //     try {
-    //       const json = JSON.parse(data);
-    //       socket.emit(json.type, json.data);
-    //     } catch (err) {
-    //       if (i === alldata.length - 1) {
-    //         trailing = data;
-    //         console.log('trail');
-    //       } else
-    //         console.log(`Parse data error, reason: ${err}, data: ${data}`);
-    //     }
-    //   });
-    // });
+    algo.on('stdio', (content) => {
+      console.log(content.toString());
+    })
     algo.on('error', (err) => {
       console.log(`Run algorithm error, reason: ${err}`);
     });
