@@ -11,7 +11,7 @@ import {
 
 import md5 from 'md5';
 
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 
 import io from 'socket.io-client';
 
@@ -173,7 +173,7 @@ class App extends Component {
             ></Canvas>
           </Paper> : ''}
           <Paper id='chart_best'>
-            <Bar
+            <Line
               key={md5(this.state.best)}
               options={{
                 legend: { display: false },
