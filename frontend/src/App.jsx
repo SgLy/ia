@@ -169,7 +169,7 @@ class App extends Component {
           {this.state.D === 2 ? <Paper id="map">
             <Canvas
               map={this.state.map}
-              particles={this.state.particles}
+              particles={this.state.particles.map(p => p.position)}
             ></Canvas>
           </Paper> : ''}
           <Paper id='chart_best'>
@@ -189,15 +189,16 @@ class App extends Component {
                 labels: this.state.best.map(r => r.label),
                 datasets: [{
                   data: this.state.best.map(r => r.value),
-                  backgroundColor: '#123456',
-                  borderWidth: 0
+                  borderWidth: 0,
+                  borderColor: '#123456',
+                  fill: false
                 }]
               }}
             />
           </Paper>
           <Paper id='chart_distrib'>
             <Bar
-              key={md5(this.state.distrib)}
+              key={md5(this.state.particles.map(p => p.value))}
               options={{
                 legend: { display: false },
                 scales: {
@@ -209,9 +210,9 @@ class App extends Component {
                 },
               }}
               data={{
-                labels: Array(this.state.distrib.length).fill(0).map((_, i) => i),
+                labels: Array(this.state.particles.map(p => p.value.length).fill(0).map((_, i) => i)),
                 datasets: [{
-                  data: this.state.distrib,
+                  data: this.state.particles.map(p => p.value),
                   backgroundColor: '#123456',
                   borderWidth: 0
                 }]

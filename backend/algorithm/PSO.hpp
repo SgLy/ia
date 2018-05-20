@@ -189,18 +189,23 @@ void PSO()
         count2 = 0;
         update_global();
         // if (i % 100 == 0) {
-            auto f = newFile();
-            fprintf(f.get(), R"( {"type": "round", "data":{ "round": %d, "best": %lf, "particles": %d }} )", i, gBestF, count2);
-
+            auto file = newFile();
+            auto print = [&](const char fmt[], ...) {
+                va_list l;
+                va_start(l, fmt);
+                vfprintf(file.get(), fmt, l);
+            };
+            print(R"( {"type": "round", "data":{ "round": %d, "best": %lf, "particles": %d }} )", i, gBestF, count2);
             if (n != 2)
                 continue;
-            f = newFile();
-            fprintf(f.get(), R"( {"type":"particles", "data":[ )");
+
+            file = newFile();
+            print(R"( {"type":"particles", "data":[ )");
             for (int i = 0; i < N; i++) {
-                fprintf(f.get(), "[");
+                print("[");
                 for (int j = 0; j < n; j++)
-                    fprintf(f.get(), "%lf%c", PList[i].x[j], j == n - 1 ? ']' : ',');
-                fprintf(f.get(), i == N - 1 ? "]}" : ",");
+                    print("%lf%c", PList[i].x[j], j == n - 1 ? ']' : ',');
+                print(i == N - 1 ? "]}" : ",");
             }
         // }
     }
