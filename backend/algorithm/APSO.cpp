@@ -18,7 +18,7 @@
 #define w 0.729
 #define c1 1.49445
 #define c2 1.49445
-#define loop 1000000 
+#define loop 100000
 #define random(a,b) (rand()%(b-a+1)+a)
 #define u 0.1	//位置因子 
 #define e 0.5//速度因子 
@@ -26,7 +26,7 @@
 using namespace std;
 
 int count2; //numbers of particles that have been reseted
-int n = 10; //dimension
+int n = 2; //dimension
 vector<double> gBest;//global best
 double gBestF;
 vector<double> ggBest;
@@ -102,21 +102,13 @@ void init_particle(Particle& p){
 			p.x[i] = random(-MAX, MAX);
 			p.v[i] = random(-Vmax, Vmax);
 		}
-		double fitness = f(p.x);
-		if (1){
-			p.pBestF = fitness;
-			for (int i = 0; i < n; i++)
-				p.pBest[i] = p.x[i];
-		}
-}
-
-/*void save_result(){
-	if (gBestF < ggBestF){
-		ggBestF = gBestF;
+	double fitness = f(p.x);
+	if (1){
+		p.pBestF = fitness;
 		for (int i = 0; i < n; i++)
-			ggBest[i] = gBest[i]; 		
+			p.pBest[i] = p.x[i];
 	}
-}*/
+}
 
 double func(vector<double> x, int n,  int func_num){ //return the value of F(x)
 	return f(x);
@@ -184,6 +176,17 @@ void PSO(){
 			count2 = 0;
 			update_global();
 			printf("round %d: %Lf  reset %d particles\n", i, gBestF,count2);
+			//print all the particles
+			if (n == 2 && i>9000)
+			{
+				for (int i = 0; i < N; i++){
+					printf("particle %d: ",i);
+					for (int j = 0; j < n ; j++){
+						printf(" %lf", PList[i].x[j]);
+					}
+					printf("\n");
+				}
+			} 
 		}
 		
 	
