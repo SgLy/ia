@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <stdlib.h>
 #include <vector>
 #include <time.h>
@@ -6,27 +6,27 @@
 #include "functions.hpp"
 using namespace std;
 
-// ²ÎÊı½á¹¹ 
+// å‚æ•°ç»“æ„ 
 struct Parameter{
-	int DIM;				// Î¬¶È
-	double F;				// Ëõ·ÅÒò×Ó 
-	double CR;				// ½»²æ¸ÅÂÊ 
-	int POP_SIZE;			// ÖÖÈº¹æÄ£ 
-	int LOOP_COUNT;			// µü´ú´ÎÊı 
-	double LOWER_BOUND;		// È¡ÖµÏÂÏŞ 
-	double UPPER_BOUND;		// È¡ÖµÉÏÏŞ 
-	int FUNC_NUM;			// ¼ÆËãº¯ÊıºÅ 
+	int DIM;				// ç»´åº¦
+	double F;				// ç¼©æ”¾å› å­ 
+	double CR;				// äº¤å‰æ¦‚ç‡ 
+	int POP_SIZE;			// ç§ç¾¤è§„æ¨¡ 
+	int LOOP_COUNT;			// è¿­ä»£æ¬¡æ•° 
+	double LOWER_BOUND;		// å–å€¼ä¸‹é™ 
+	double UPPER_BOUND;		// å–å€¼ä¸Šé™ 
+	int FUNC_NUM;			// è®¡ç®—å‡½æ•°å· 
 };
 
-// ¸öÌåÀà
+// ä¸ªä½“ç±»
 class Individual
 {
 	public:
-		vector<double> x; 	// ¸öÌåµÄDIMÏî 
-		double fitness; 	// ÊÊÓ¦Öµ
-		int DIM;			// Î¬¶È
-		double LOWER_BOUND;	// È¡ÖµÏÂÏŞ 
-		double UPPER_BOUND;	// È¡ÖµÉÏÏŞ
+		vector<double> x; 	// ä¸ªä½“çš„DIMé¡¹ 
+		double fitness; 	// é€‚åº”å€¼
+		int DIM;			// ç»´åº¦
+		double LOWER_BOUND;	// å–å€¼ä¸‹é™ 
+		double UPPER_BOUND;	// å–å€¼ä¸Šé™
 		int FUNC_NUM;
 		Individual(Parameter &p)
 		{
@@ -36,12 +36,12 @@ class Individual
 			UPPER_BOUND = p.UPPER_BOUND; 
 			FUNC_NUM = p.FUNC_NUM;
 			for(int i = 0; i < DIM; i++)
-				x[i] = LOWER_BOUND + (UPPER_BOUND - LOWER_BOUND) * rand() / (RAND_MAX + 1.0); // ÉÏÏÂÏŞÖ®¼äµÄÊı 
+				x[i] = LOWER_BOUND + (UPPER_BOUND - LOWER_BOUND) * rand() / (RAND_MAX + 1.0); // ä¸Šä¸‹é™ä¹‹é—´çš„æ•° 
 		} 
 		double Evaluate()
 		{
 			fitness = 0;
-			// ¼ÆËãÊÊÓ¦Öµ 
+			// è®¡ç®—é€‚åº”å€¼ 
 			vector<double> data;
 			for(int i = 0; i < DIM; i++)
 			{
@@ -53,23 +53,23 @@ class Individual
 		}
 };
 
-// ²î·Ö½ø»¯Ëã·¨Àà
+// å·®åˆ†è¿›åŒ–ç®—æ³•ç±»
 class DE
 {
 	public:
-		int bestIndex; 				// ×îÓÅ¸öÌåµÄÎ»ÖÃ 
-		double bestFitness;			// ×îÓÅ¸öÌåµÄÊÊÓ¦Öµ
-		int DIM;					// Î¬¶È 
-		double F;					// Ëõ·ÅÒò×Ó 
-		double CR;					// ±äÒì¸ÅÂÊ 
-		int POP_SIZE;				// ÖÖÈº¹æÄ£ 
-		int LOOP_COUNT;				// µü´ú´ÎÊı 
-		vector<Individual> curPopulation; 	// µ±Ç°ÖÖÈº 
-		vector<Individual> mutaPopulation; 	// ±äÒìÖÖÈº 
-		vector<Individual> crossPopulation; 	// ½»²æÖÖÈº 
-		vector<double> curFitness;         	// µ±Ç°ÖÖÈº¸öÌåµÄÊÊÓ¦Öµ 
+		int bestIndex; 				// æœ€ä¼˜ä¸ªä½“çš„ä½ç½® 
+		double bestFitness;			// æœ€ä¼˜ä¸ªä½“çš„é€‚åº”å€¼
+		int DIM;					// ç»´åº¦ 
+		double F;					// ç¼©æ”¾å› å­ 
+		double CR;					// å˜å¼‚æ¦‚ç‡ 
+		int POP_SIZE;				// ç§ç¾¤è§„æ¨¡ 
+		int LOOP_COUNT;				// è¿­ä»£æ¬¡æ•° 
+		vector<Individual> curPopulation; 	// å½“å‰ç§ç¾¤ 
+		vector<Individual> mutaPopulation; 	// å˜å¼‚ç§ç¾¤ 
+		vector<Individual> crossPopulation; 	// äº¤å‰ç§ç¾¤ 
+		vector<double> curFitness;         	// å½“å‰ç§ç¾¤ä¸ªä½“çš„é€‚åº”å€¼ 
 
-		DE(Parameter &p)  // ³õÊ¼»¯£¬¼ÆËãÖÖÈº¸öÌåÊÊÓ¦Öµ 
+		DE(Parameter &p)  // åˆå§‹åŒ–ï¼Œè®¡ç®—ç§ç¾¤ä¸ªä½“é€‚åº”å€¼ 
 		{
 			DIM = p.DIM;
 			F = p.F;
@@ -86,11 +86,11 @@ class DE
 				curFitness.push_back(curPopulation[i].Evaluate()); 
 		}
 		
-		void Mutate()	// ±äÒì²Ù×÷ 
+		void Mutate()	// å˜å¼‚æ“ä½œ 
 		{
 			for(int i = 0; i < POP_SIZE; i++)
 			{
-				// ´Óµ±Ç°ÖÖÈºËæ»úÑ¡Ôñ3¸ö¸öÌå£¬²¢±£Ö¤Õâ3¸ö¸öÌåÁ¬Í¬¸öÌåiÒ»¹²4¸ö¸öÌåÖ®¼ä»¥²»ÏàÍ¬ 
+				// ä»å½“å‰ç§ç¾¤éšæœºé€‰æ‹©3ä¸ªä¸ªä½“ï¼Œå¹¶ä¿è¯è¿™3ä¸ªä¸ªä½“è¿åŒä¸ªä½“iä¸€å…±4ä¸ªä¸ªä½“ä¹‹é—´äº’ä¸ç›¸åŒ 
 				int rand1, rand2, rand3;
 				while(1)
 				{
@@ -99,7 +99,7 @@ class DE
 					rand3 = rand() % POP_SIZE;
 					if(i != rand1 && i != rand2 && i != rand3 && rand1 != rand2 && rand2 != rand3 && rand1 != rand3) break;
 				}
-				// ±äÒì 
+				// å˜å¼‚ 
 				for(int j = 0; j < DIM; j++) 
 				{
 					mutaPopulation[i].x[j] = curPopulation[rand1].x[j] + F * (curPopulation[rand2].x[j] - curPopulation[rand3].x[j]); 
@@ -108,15 +108,15 @@ class DE
 			}
 		}
 		
-		void Cross() // ½»²æ²Ù×÷
+		void Cross() // äº¤å‰æ“ä½œ
 		{
 			for (int i = 0; i < POP_SIZE; i++)
 			{
-				int rand1 = rand() % 2;		// 0»ò1 
+				int rand1 = rand() % 2;		// 0æˆ–1 
 				for (int j = 0; j < DIM; j++)
 				{
-					double rand2 = rand() / (RAND_MAX + 1.0); 	// 0~1Ö®¼äµÄËæ»úĞ¡Êı 
-					// ½»²æ¹«Ê½ 
+					double rand2 = rand() / (RAND_MAX + 1.0); 	// 0~1ä¹‹é—´çš„éšæœºå°æ•° 
+					// äº¤å‰å…¬å¼ 
 					if (rand2 <= CR || j == rand1) 
 						crossPopulation[i].x[j] = mutaPopulation[i].x[j];
 					else
@@ -125,11 +125,11 @@ class DE
 			}
 		} 
 		
-		void Select() // Ñ¡Ôñ²Ù×÷
+		void Select() // é€‰æ‹©æ“ä½œ
 		{
 			for(int i = 0; i < POP_SIZE; i++)
 			{
-				double crossFitness = 	crossPopulation[i].Evaluate(); // ½»²æºó¸öÌåiµÄÊÊÓ¦Öµ
+				double crossFitness = 	crossPopulation[i].Evaluate(); // äº¤å‰åä¸ªä½“içš„é€‚åº”å€¼
 				if(crossFitness <= curFitness[i])
 				{
 					for (int j = 0; j < DIM; j++)
@@ -141,7 +141,7 @@ class DE
 			} 
 		} 
 		
-		void UpdateBest()  // ¸üĞÂ×îÓÅ¸öÌå 
+		void UpdateBest()  // æ›´æ–°æœ€ä¼˜ä¸ªä½“ 
 		{
 			bestIndex = 0;
 			bestFitness = curFitness[0];
@@ -160,10 +160,10 @@ class DE
 		{
 			for(int i = 0; i < LOOP_COUNT; i++)
 			{
-				Mutate();				// ±äÒì
-				Cross();				// ½»²æ
-				Select();				// Ñ¡Ôñ
-				UpdateBest(); 			// ¸üĞÂµ±Ç°ÖÖÈº×îÓÅ¸öÌå 
+				Mutate();				// å˜å¼‚
+				Cross();				// äº¤å‰
+				Select();				// é€‰æ‹©
+				UpdateBest(); 			// æ›´æ–°å½“å‰ç§ç¾¤æœ€ä¼˜ä¸ªä½“ 
 				cout<< "Count: "  << setiosflags(ios::left) << setw(8) << i ;
 			}
 		}
@@ -174,13 +174,13 @@ int main()
 {
 	srand((int)time(NULL));
 	Parameter p = {
-		.DIM = 10,				// Î¬¶È
-		.F = 0.5,				// Ëõ·ÅÒò×Ó 
-		.CR = 0.3,				// ½»²æ¸ÅÂÊ 
-		.POP_SIZE = 100,		// ÖÖÈº¹æÄ£ 
-		.LOOP_COUNT = 10000,	// µü´ú´ÎÊı 
-		.LOWER_BOUND = -100,	// È¡ÖµÏÂÏŞ 
-		.UPPER_BOUND = 100,		// È¡ÖµÉÏÏŞ 
+		.DIM = 10,				// ç»´åº¦
+		.F = 0.5,				// ç¼©æ”¾å› å­ 
+		.CR = 0.3,				// äº¤å‰æ¦‚ç‡ 
+		.POP_SIZE = 100,		// ç§ç¾¤è§„æ¨¡ 
+		.LOOP_COUNT = 10000,	// è¿­ä»£æ¬¡æ•° 
+		.LOWER_BOUND = -100,	// å–å€¼ä¸‹é™ 
+		.UPPER_BOUND = 100,		// å–å€¼ä¸Šé™ 
 		.FUNC_NUM = 1
 	};
 	DE MyDE(p);
