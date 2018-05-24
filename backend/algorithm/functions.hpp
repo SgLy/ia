@@ -9,10 +9,17 @@
 #include <vector>
 
 const double PI = acos(-1);
+const double xita = 2*PI/100;
 
 typedef std::vector<double> vec;
 typedef std::vector<vec> mat;
 
+double y(const vec &x, int t){
+	return x[0]*sin(x[1]*t*xita + x[2] * sin(x[3]*t*xita + x[4]*sin(x[5]*t*xita)));
+}
+double y0(const vec& x, int t){
+	return  1.0*sin(5.0*t*xita - 1.5 * sin(4.8*t*xita + 2.0*sin(4.9*t*xita)));
+}
 vec sub(const vec& a, const vec& b, int D)
 {
     vec res;
@@ -44,7 +51,7 @@ vec mul(const vec& v, const double x, int D)
 }
 
 typedef std::function<double(const vec&, const vec&, const mat&, int)> func_t;
-func_t functions[30] = {
+func_t functions[8] = {
     // 1. Bent Cigar Function
     [](const vec& x, const vec& o, const mat& M, int D) {
         auto t = mul(M, sub(x, o, D), D);
@@ -138,29 +145,13 @@ func_t functions[30] = {
 
         return res;
     },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; },
-    [](const vec& x, const vec& o, const mat& M, int D) { return 0.0f; }
+    [](const vec& x, const vec& o, const mat& M, int D) { 
+    	double ans = 0;
+		for (int t = 0; t <= 100; t++){
+			ans += (y(x,t) - y0(x,t)) * (y(x,t) - y0(x,t));
+		}
+		return ans;
+    }
 };
 
 class Function {
