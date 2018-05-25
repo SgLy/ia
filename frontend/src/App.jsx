@@ -293,7 +293,7 @@ class App extends Component {
               height={400}
               options={{
                 maintainAspectRatio: false,
-                legend: { display: false },
+                // legend: { display: false },
                 scales: {
                   xAxes: [{
                     ticks: {
