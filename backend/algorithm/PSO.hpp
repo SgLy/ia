@@ -4,12 +4,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <vector>
+#include <windows.h>
+#include "util.hpp"
 
-int cnt = 0;
-auto newFile = [&]() {
-    std::string name = ("tmp/PSO" + std::to_string(cnt++)).c_str();
-    return std::unique_ptr<FILE, decltype(&fclose)>(fopen(name.c_str(), "w"), &fclose);
-};
+auto newFile = newFileMaker("PSO");
 
 #define N 20
 #define MAX 100
@@ -17,7 +15,7 @@ auto newFile = [&]() {
 #define w 0.729
 #define c1 1.49445
 #define c2 1.49445
-#define loop 1000000
+int loop = 50000;
 #define random(a, b) (rand() % (b - a + 1) + a)
 #define u 0.1 //位置因子
 #define e 0.5 //速度因子
@@ -185,46 +183,43 @@ void update_global_2()
 
 void PSO()
 {
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < loop; i++) {
         count2 = 0;
         update_global();
-        // if (i % 100 == 0) {
-            auto file = newFile();
-            auto print = [&](const char fmt[], ...) {
-                va_list l;
-                va_start(l, fmt);
-                vfprintf(file.get(), fmt, l);
-            };
-            print(R"( {"type": "round", "data":{ "round": %d, "best": %lf, "particles": %d }} )", i, gBestF, count2);
-            if (n != 2)
-                continue;
+        if (n == 2 || i % (loop / 50) == 0) {
+            newFile()(R"( {"type": "PSO", "data":{ "round": %d, "best": %lf, "particles": %d }} )", i, gBestF, count2);
 
-            file = newFile();
+            auto print = newFile();
             print(R"( {"type":"particles", "data":[ )");
             for (int i = 0; i < N; i++) {
-                print("[");
+                print(R"( {"position":[ )");
                 for (int j = 0; j < n; j++)
                     print("%lf%c", PList[i].x[j], j == n - 1 ? ']' : ',');
+                print(R"( ,"value":%lf} )", f(PList[i].x));
                 print(i == N - 1 ? "]}" : ",");
             }
-        // }
+        }
+        if (n == 2)
+            Sleep(50);
     }
 }
 
-int Run(int _func_num, int _n)
+int Particle(int _func_num, int _n)
 {
     // set global vars
     func_num = _func_num;
     n = _n;
+    if (_n == 2)
+        loop = 50;
     f = Function(func_num, n);
     srand((unsigned)time(NULL));
     init();
     PSO();
-    auto f = newFile();
-    fprintf(f.get(), R"( { "type": "best", "data": { "value": %lf, "vector": [ )", gBestF);
-    for (int i = 0; i < n; i++)
-        fprintf(f.get(), "%lf%c", gBest[i], i == n - 1 ? ' ' : ',');
-    fprintf(f.get(), R"( ]}} )");
+    // auto print = newFile();
+    // print(R"( { "type": "best", "data": { "value": %lf, "vector": [ )", gBestF);
+    // for (int i = 0; i < n; i++)
+    //     print("%lf%c", gBest[i], i == n - 1 ? ' ' : ',');
+    // print(R"( ]}} )");
 
     return 0;
 }

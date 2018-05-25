@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/algorithm/main.exe",
-      "args": ["2", "2"],
+      "args": ["3", "10"],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}/algorithm",
       "environment": [],

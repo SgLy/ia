@@ -7,6 +7,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include "util.hpp"
 
 const double PI = acos(-1);
 
@@ -220,13 +221,7 @@ public:
             map.push_back(row);
         }
 
-        auto f = std::unique_ptr<FILE, decltype(&fclose)>(
-            fopen("tmp/map", "w"), &fclose);
-        auto print = [&](const char fmt[], ...) {
-            va_list l;
-            va_start(l, fmt);
-            vfprintf(f.get(), fmt, l);
-        };
+        auto print = newFileMaker("map")();
         print(R"( {"type":"map","data":[ )");
 
         for (size_t i = 0; i < map.size(); ++i) {

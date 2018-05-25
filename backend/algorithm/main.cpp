@@ -1,6 +1,7 @@
 #include <vector>
 #include <windows.h>
 #include "PSO.hpp"
+#include "DE.hpp"
 
 int main(int argc, char * argv[])
 {
@@ -11,7 +12,8 @@ int main(int argc, char * argv[])
     Function f(func_num, D, "codes/C version/input_data");
     f.dumpMap(0.5);
 
-    Run(func_num, D);
+    Particle(func_num, D);
+    DiffEvo(func_num, D);
 
     return 0;
 }

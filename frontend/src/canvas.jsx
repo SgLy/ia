@@ -32,6 +32,7 @@ export default class Canvas extends Component {
   }
 
   redraw = () => {
+    // eslint-disable-next-line no-console
     console.time('draw');
     const max = Math.max(...this.state.map.map(r => Math.max(...r)));
     const min = Math.min(...this.state.map.map(r => Math.min(...r)));
@@ -52,6 +53,7 @@ export default class Canvas extends Component {
       });
     });
     this.ctx.putImageData(imageData, 0, 0);
+    // eslint-disable-next-line no-console
     console.timeEnd('draw');
   }
 
@@ -71,7 +73,7 @@ export default class Canvas extends Component {
           left: 0,
           backgroundColor: 'rgba(0, 0, 0, 0)'
         }}>
-          {this.props.particles.map(p => (
+          {this.props.particles.map((p, i) => (
             <div className="particle" style={{
               position: 'absolute',
               height: 5,
@@ -80,8 +82,8 @@ export default class Canvas extends Component {
               top: (100 - p[1]) / 200 * this.height - 2.5,
               left: (p[0] + 100) / 200 * this.width - 2.5,
               backgroundColor: 'blue',
-              transition: 'all 0.2s ease'
-            }}></div>
+              transition: 'all 0.5s linear'
+            }} key={this.id + i}></div>
           ))}
         </div>
       </div>
